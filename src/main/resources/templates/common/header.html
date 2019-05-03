@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header" class="page-wrapper-row">
+    <div class="page-wrapper-top">
+        <!-- BEGIN HEADER -->
+        <div class="page-header">
+            <!-- BEGIN HEADER TOP -->
+            <div class="page-header-top">
+                <div class="container">
+                    <!-- BEGIN LOGO -->
+                    <div class="page-logo">
+                        <a href="/urm/scene/dashboardPage">
+                            <img width="133" height="42"
+                                 src="http://www.eship.com.cn/wp-content/uploads/2018/08/cropped-logo-1.png"
+                                 class="logo-default" alt="网舟联合科技（北京）有限公司" itemprop="logo">
+                        </a>
+                    </div>
+                    <!-- END LOGO -->
+                    <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+                    <a href="javascript:;" class="menu-toggler"></a>
+                    <!-- END RESPONSIVE MENU TOGGLER -->
+                    <!-- BEGIN TOP NAVIGATION MENU -->
+                    <div class="top-menu">
+                        <ul class="nav navbar-nav pull-right">
+                            <li class="dropdown dropdown-user dropdown-dark">
+                                <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"
+                                   data-hover="dropdown" data-close-others="true">
+                                    <img alt="" class="img-circle"
+                                         th:src="@{/metronic/assets/layouts/layout3/img/avatar9.jpg}">
+                                    <span class="username username-hide-mobile"
+                                          th:text="${session.userInfo.name}"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-default">
+                                    <li>
+                                        <a href="/system/loginout">
+                                            <i class="icon-key"></i> 退出登录 </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END TOP NAVIGATION MENU -->
+                </div>
+            </div>
+            <!-- END HEADER TOP -->
+            <!-- BEGIN HEADER MENU -->
+            <div class="page-header-menu">
+                <div class="container">
+                    <!-- BEGIN MEGA MENU -->
+                    <!-- DOC: Apply "hor-menu-light" class after the "hor-menu" class below to have a horizontal menu with white background -->
+                    <!-- DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
+                    <div class="hor-menu  ">
+                        <ul class="nav navbar-nav">
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown active">
+                                <a href="javascript:;"> 数据看板
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li th:each="dashboard:${session.dashbarodList}" aria-haspopup="true"
+                                        class=" active">
+                                        <a th:href="'/dashboard/dashboardPage?dashboardId=' + ${dashboard.id}"
+                                           class="nav-link  active" th:text="${dashboard.dashboardName}">
+
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;"> 事件与场景
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 事件场景管理
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;"> 数据洞察
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/insight/eventAnalyticsPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 事件场景分析
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/insight/hitAnalyticsPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 整体分析
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/insight/funnelListPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 转化分析
+                                        </a>
+                                    </li>
+                                    <!--<li aria-haspopup="true" class=" active">-->
+                                    <!--<a href="/urm/scene/scenePage" class="nav-link  active">-->
+                                    <!--<i class="icon-bar-chart"></i> 留存分析-->
+                                    <!--</a>-->
+                                    <!--</li>-->
+                                </ul>
+                            </li>
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;"> 用户画像
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 用户标签
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/customer/customerListPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 用户列表
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/customer/customerGroupListPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 用户群体
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;"> 营销与监测
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 营销计划
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 营销监测
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li aria-haspopup="true" class="menu-dropdown classic-menu-dropdown">
+                                <a href="javascript:;"> 系统与配置
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="dropdown-menu pull-left">
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 用户账号管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/system/systemDictListPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 字典管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/system/dashboardListPage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 数据看板管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a th:href="@{/system/channelListPage}" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 渠道管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a th:href="@{/system/eventListPage}" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 事件管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 渠道行为管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 渠道行为属性管理
+                                        </a>
+                                    </li>
+                                    <li aria-haspopup="true" class=" active">
+                                        <a href="/urm/scene/scenePage" class="nav-link  active">
+                                            <i class="icon-bar-chart"></i> 用户模板管理
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END MEGA MENU -->
+                </div>
+            </div>
+            <!-- END HEADER MENU -->
+        </div>
+        <!-- END HEADER -->
+    </div>
+</div>
+</body>
+</html>

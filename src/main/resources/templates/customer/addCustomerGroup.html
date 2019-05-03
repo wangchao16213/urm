@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>创建群组</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
+          type="text/css"/>
+    <link rel="stylesheet"
+          th:href="@{/metronic/assets/global/plugins/font-awesome/css/font-awesome.min.css}">
+    <link th:href="@{/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css}"
+          rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap/css/bootstrap.min.css}" rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css}"
+          rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css}"
+          rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-select/css/bootstrap-select.css}" rel="stylesheet"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link th:href="@{/metronic/assets/global/css/components-md.min.css}" rel="stylesheet"
+          id="style_components"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/css/plugins-md.min.css}" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link th:href="@{/metronic/assets/layouts/layout3/css/layout.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/metronic/assets/layouts/layout3/css/themes/default.min.css}" rel="stylesheet"
+          type="text/css"
+          id="style_color"/>
+    <link th:href="@{/metronic/assets/layouts/layout3/css/custom.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css"
+          rel="stylesheet"
+          type="text/css"/>
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <style>
+        td {
+            width: 100%;
+            word-break: keep-all; /* 不换行 */
+            white-space: nowrap; /* 不换行 */
+            overflow: hidden; /* 内容超出宽度时隐藏超出部分的内容 */
+            text-overflow: ellipsis; /* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+        }
+    </style>
+</head>
+<!-- END HEAD -->
+
+<body class="page-container-bg-solid page-md">
+<div class="page-wrapper">
+    <div th:replace="common/header :: header"></div>
+    <div class="page-wrapper-row full-height">
+        <div class="page-wrapper-middle">
+            <!-- BEGIN CONTAINER -->
+            <div class="page-container">
+                <!-- BEGIN CONTENT -->
+                <div class="page-content-wrapper">
+                    <!-- BEGIN CONTENT BODY -->
+                    <!-- BEGIN PAGE HEAD-->
+                    <div class="page-head">
+                        <div class="container">
+                            <!-- BEGIN PAGE TITLE -->
+                            <div class="page-title">
+                                <h1>客户分群
+                                    <small>创建群组</small>
+                                </h1>
+                            </div>
+                            <!-- END PAGE TITLE -->
+                        </div>
+                    </div>
+                    <!-- END PAGE HEAD-->
+                    <!-- BEGIN PAGE CONTENT BODY -->
+                    <div class="page-content">
+                        <div class="container">
+                            <!-- BEGIN PAGE CONTENT INNER -->
+                            <div class="page-content-inner">
+                                <div class="mt-content-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="portlet light bordered">
+                                                <div class="portlet-title">
+                                                    <div class="caption">
+                                                        <span class="caption-subject  bold uppercase">新增客户群组</span>
+                                                    </div>
+                                                    <div class="tools">
+                                                        <a href="" class="collapse" data-original-title=""
+                                                           title=""> </a>
+                                                    </div>
+                                                </div>
+                                                <div class="portlet-body form form-horizontal">
+                                                    <!-- BEGIN FORM-->
+                                                    <div class="form-body" id="app-container">
+                                                        <h3 class="form-section">基础信息</h3>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">客户群组</label>
+                                                                    <div class="col-md-9">
+                                                                        <input id="groupName" type="text"
+                                                                               class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">所属渠道</label>
+                                                                    <div class="col-md-9">
+                                                                        <select id="channelSelect"
+                                                                                class="bs-select form-control">
+                                                                            <option th:each="channel:${channelList}"
+                                                                                    th:value="${channel.id}"
+                                                                                    th:text="${channel.channelName}">
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">群组类型</label>
+                                                                    <div class="col-md-9">
+                                                                        <select id="groupTypeSelect"
+                                                                                class="bs-select form-control">
+                                                                            <option value="0">静态</option>
+                                                                            <option value="1">调度</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">调度表达式</label>
+                                                                    <div class="col-md-9">
+                                                                        <input id="cronExsspresion" type="text"
+                                                                               class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                        </div>
+                                                        <!--/row-->
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">描述</label>
+                                                                    <div class="col-md-9">
+                                                                            <textarea id="groupDesc"
+                                                                                      class="form-control"
+                                                                                      rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label class="control-label col-md-3">分群引擎</label>
+                                                                    <div class="col-md-9">
+                                                                        <select id="groupEngineTypeSelect"
+                                                                                class="bs-select form-control">
+                                                                            <option value="0">静态集合</option>
+                                                                            <option value="1">分群引擎</option>
+                                                                            <option value="2">SQL脚本</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--/span-->
+                                                        </div>
+                                                        <!--/row-->
+                                                        <div id="nzfqyq">
+
+                                                            <h3 class="form-section">做过(相同条件组是交集不同条件组是并集)</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12"
+                                                                     style="overflow: auto; width: 100%;">
+                                                                    <table id="doEvent"
+                                                                           class="table table-hover table-light">
+                                                                        <thead>
+                                                                        <tr class="uppercase">
+                                                                            <th> 事件</th>
+                                                                            <th> 过滤器</th>
+                                                                            <th> 量度</th>
+                                                                            <th> 周期</th>
+                                                                            <th> 条件组</th>
+                                                                            <th> 操作</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <button id="addDoEventConditionBtn"
+                                                                                    type="button"
+                                                                                    class="btn green mt-ladda-btn btn-sm ladda-button btn-circle"
+                                                                                    data-style="slide-down">
+                                                                                <span class="ladda-label">并且</span>
+                                                                                <span class="ladda-spinner"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <h3 class="form-section">访问过(相同条件组是交集不同条件组是并集)</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12"
+                                                                     style="overflow: auto; width: 100%;">
+                                                                    <table id="doHit"
+                                                                           class="table table-hover table-light">
+                                                                        <thead>
+                                                                        <tr class="uppercase">
+                                                                            <th> 过滤器</th>
+                                                                            <th> 量度</th>
+                                                                            <th> 周期</th>
+                                                                            <th> 条件组</th>
+                                                                            <th> 操作</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <button id="addDoHitConditionBtn"
+                                                                                    type="button"
+                                                                                    class="btn green mt-ladda-btn btn-sm ladda-button btn-circle"
+                                                                                    data-style="slide-down">
+                                                                                <span class="ladda-label">并且</span>
+                                                                                <span class="ladda-spinner"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <h3 class="form-section">用户活跃于</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <table id="doAction"
+                                                                           class="table table-hover table-light">
+                                                                        <thead>
+                                                                        <tr class="uppercase">
+                                                                            <th> 时段选项</th>
+                                                                            <th> 时段</th>
+                                                                            <th> 条件组</th>
+                                                                            <th> 操作</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <button id="addDoActionConditionBtn"
+                                                                                    type="button"
+                                                                                    class="btn green mt-ladda-btn btn-sm ladda-button btn-circle"
+                                                                                    data-style="slide-down">
+                                                                                <span class="ladda-label">并且</span>
+                                                                                <span class="ladda-spinner"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <h3 class="form-section">用户标签满足于</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <table id="doEvent1"
+                                                                           class="table table-hover table-light">
+                                                                        <thead>
+                                                                        <tr class="uppercase">
+                                                                            <th> 事件</th>
+                                                                            <th> 过滤器</th>
+                                                                            <th> 周期</th>
+                                                                            <th> 操作</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-12">
+                                                                            <button id="addStepBtn" type="button"
+                                                                                    class="btn green mt-ladda-btn btn-sm ladda-button btn-circle"
+                                                                                    data-style="slide-down">
+                                                                                <span class="ladda-label">或者</span>
+                                                                                <span class="ladda-spinner"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div id="sqlscript">
+                                                            <h3 class="form-section">SQL脚本</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <textarea id="code" name="code"
+                                                                              class="form-control">
+                                                        SELECT SQL_NO_CACHE DISTINCT
+                                                                @var1 AS `val1`, @'val2', @global.'sql_mode',
+                                                                1.1 AS `float_val`, 0.09e3 AS `int_with_esp`,
+                                                                0xFA5 AS `hex`, x'fa5' AS `hex2`, 0b101 AS `bin`, b'101' AS `bin2`,
+                                                                'myString', UNKNOWN
+                                                            FROM DUAL
+                                                            -- space needed after '--'
+                                                            # 1 line comment
+                                                            /* multiline
+                                                            comment! */
+                                                            LIMIT 1 OFFSET 0;
+                                                        </textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="form-actions">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="row">
+                                                                    <div class="col-md-offset-3 col-md-9">
+                                                                        <button id="saveCustomerGroup"
+                                                                                class="btn green">
+                                                                            保存
+                                                                        </button>
+                                                                        <button type="button" class="btn default">
+                                                                            上一步
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6"></div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- END FORM-->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END PAGE CONTENT INNER -->
+                        </div>
+                    </div>
+                    <!-- END PAGE CONTENT BODY -->
+                    <!-- END CONTENT BODY -->
+                </div>
+                <!-- END CONTENT -->
+            </div>
+            <!-- END CONTAINER -->
+        </div>
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+<!-- BEGIN CORE PLUGINS -->
+
+
+<script th:src="@{/metronic/assets/global/plugins/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap/js/bootstrap.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/js.cookie.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/jquery.blockui.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/scripts/app.min.js}" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script th:src="@{/metronic/assets/global/plugins/moment.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js}"
+        type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"
+        type="text/javascript"></script>
+<script th:src="@{/querybuilder/dist/i18n/query-builder.zh-CN.js}" type="text/javascript"></script>
+<script th:src="@{/echarts/echarts.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/datatables/datatables.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js}"
+        type="text/javascript"></script>
+<script th:src="@{/tables/dti18n.js}"
+        type="text/javascript"></script>
+
+
+<script>
+    var formBody = {
+        channelId: $("#channelSelect").val(),
+        events: [],
+        doEvent: {
+            measures: [],
+        },
+        doHit: {
+            measures: [],
+        }
+    };
+
+    $(document).ready(function () {
+        $("select").selectpicker();
+        $("#nzfqyq").hide();
+        $("#sqlscript").hide();
+        initEvents();
+        initMeasureByEvent();
+        initMeasureByHit();
+        $("#channelSelect").change(function () {
+            $("table > tbody").empty();
+            formBody.channelId = $("#channelSelect").val();
+            initEvents();
+            initMeasureByEvent();
+            initMeasureByHit();
+        });
+
+
+        $("#addDoEventConditionBtn").click(function () {
+            addDoEventCondition();
+        });
+
+        $("#addDoHitConditionBtn").click(function () {
+            addDoHitCondition();
+        });
+
+        $("#addDoActionConditionBtn").click(function () {
+            addDoActionCondition();
+        });
+
+        $("#saveCustomerGroup").click(function () {
+            var groupName = $("#groupName").val();
+            var groupDesc = $("#groupDesc").val();
+            var channelId = $("#channelSelect").val();
+            var groupType = $("#groupTypeSelect").val();
+            var cronExpression = $("#cronExsspresion").val();
+            var groupEngineType = $("#groupEngineTypeSelect").val();
+            var groupDsl = null;
+            if (groupEngineType == '1') {
+                groupDsl = {'doEvent': [], 'doHit': [], 'doAction': []};
+                $("#doEvent > tbody > tr").each(function () {
+                    var sql = null;
+                    var filterDsl = null;
+                    var eventId = $(this).children().eq(0).children().first().val();
+                    if ($(this).data("querybuilderObj").queryBuilder('getSQL') != null) {
+                        sql = $(this).data("querybuilderObj").queryBuilder('getSQL').sql;
+                        filterDsl = JSON.stringify($(this).data("querybuilderObj").queryBuilder('getRules'));
+                    }
+                    var measureOption = {};
+                    measureOption.measureId = $(this).children().eq(2).children().first().val();
+                    measureOption.opreation = $(this).children().eq(2).children().eq(1).val();
+                    measureOption.value = $(this).children().eq(2).children().eq(2).val();
+                    var zqOption = {type: '2', value: null};
+                    zqOption.type = $(this).children().eq(3).children().first().val();
+                    if (zqOption.type != '2') {
+                        zqOption.value = $(this).children().eq(3).children().eq(1).val();
+                    }
+                    var conditonGroup = $(this).children().eq(4).children().first().val();
+                    groupDsl.doEvent.push({
+                        'eventId': eventId,
+                        'filterDsl': filterDsl,
+                        'filter': sql,
+                        'measureOption': measureOption,
+                        'zqOption': zqOption,
+                        'conditionGroup': conditonGroup
+                    });
+                });
+
+                $("#doHit > tbody > tr").each(function () {
+                    var sql = null;
+                    var filterDsl = null;
+                    if ($(this).data("querybuilderObj").queryBuilder('getSQL') != null) {
+                        sql = $(this).data("querybuilderObj").queryBuilder('getSQL').sql;
+                        filterDsl = JSON.stringify($(this).data("querybuilderObj").queryBuilder('getRules'));
+                    }
+                    var measureOption = {};
+                    measureOption.measureId = $(this).children().eq(1).children().first().val();
+                    measureOption.opreation = $(this).children().eq(1).children().eq(1).val();
+                    measureOption.value = $(this).children().eq(1).children().eq(2).val();
+
+                    var zqOption = {type: '2', value: null};
+                    zqOption.type = $(this).children().eq(2).children().first().val();
+                    if (zqOption.type != '2') {
+                        zqOption.value = $(this).children().eq(2).children().eq(1).val();
+                    }
+                    var conditonGroup = $(this).children().eq(3).children().first().val();
+
+                    groupDsl.doHit.push({
+                        'filterDsl': filterDsl,
+                        'filter': sql,
+                        'measureOption': measureOption,
+                        'zqOption': zqOption,
+                        'conditionGroup': conditonGroup
+                    });
+
+                });
+
+
+                $("#doAction > tbody > tr").each(function () {
+                    var zqOption = {type: '2', value: null};
+                    zqOption.type = $(this).children().eq(0).children().first().val();
+                    if (zqOption.type != '2') {
+                        zqOption.value = $(this).children().eq(1).children().first().val();
+                    }
+                    var conditonGroup = $(this).children().eq(2).children().first().val();
+                    groupDsl.doAction.push({
+                        'zqOption': zqOption,
+                        'conditionGroup': conditonGroup
+                    });
+                });
+            } else if (groupEngineType == '2') {
+                groupDsl = $("#code").val();
+            }
+
+            $.post('/customer/saveCustomerGroup', {
+                'groupName': groupName,
+                'channelId': $("#channelSelect").val(),
+                'groupDesc': groupDesc,
+                'groupType': groupType,
+                'cronExpression': cronExpression,
+                'groupEngineType': groupEngineType,
+                'groupDsl': JSON.stringify(groupDsl)
+            }, function (data) {
+                if (data == '0') {
+                    alert('保存成功');
+                    window.location.href = '/customer/customerGroupListPage';
+                } else {
+                    alert('保存失败');
+                }
+            }, 'json');
+
+
+        });
+
+        $(document).on("click", "a[removeSteps]", function () {
+            $(this).parent().parent().remove();
+        });
+
+
+        $("#groupEngineTypeSelect").change(function () {
+            if ($(this).val() == '0') {
+                $("#nzfqyq").hide();
+                $("#sqlscript").hide();
+            }
+            if ($(this).val() == '1') {
+                $("#nzfqyq").show();
+                $("#sqlscript").hide();
+            }
+            if ($(this).val() == '2') {
+                $("#nzfqyq").hide();
+                $("#sqlscript").show();
+            }
+        });
+    });
+
+    function initEvents() {
+        $.get('/scene/getEventsByChannelId', {'channelId': $("#channelSelect").val()}, function (data) {
+            formBody.events = data;
+            formBody.channelId = $("#channelSelect").val();
+
+        }, 'json');
+    }
+
+    function initMeasureByEvent() {
+        $.get('/scene/getMeasureInEventLayerByChannelId', {'channelId': $("#channelSelect").val()}, function (data) {
+            formBody.doEvent.measures = data;
+        }, 'json');
+    }
+
+    function initMeasureByHit() {
+        $.get('/scene/getMeasureInHitByChannelId', {'channelId': $("#channelSelect").val()}, function (data) {
+            formBody.doHit.measures = data;
+        }, 'json');
+    }
+
+
+    function datarangerinit(node) {
+        //定义locale汉化插件
+        var locale = {
+            "format": 'YYYY-MM-DD',
+            "separator": ",",
+            "applyLabel": "确定",
+            "cancelLabel": "取消",
+            "fromLabel": "起始时间",
+            "toLabel": "结束时间'",
+            "customRangeLabel": "自定义",
+            "weekLabel": "W",
+            "daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+            "monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "firstDay": 1
+        };
+        //初始化显示当前时间
+        node.val(moment().subtract('hours', 1).format('YYYY-MM-DD') + ',' + moment().format('YYYY-MM-DD'));
+        //日期控件初始化
+        node.daterangepicker(
+            {
+                'locale': locale,
+                //汉化按钮部分
+                ranges: {
+                    '今日': [moment(), moment()],
+                    '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    '最近7日': [moment().subtract(6, 'days'), moment()],
+                    '最近30日': [moment().subtract(29, 'days'), moment()],
+                    '本月': [moment().startOf('month'), moment().endOf('month')],
+                    '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+            function (start, end) {
+                node.val(start.format('YYYY-MM-DD') + ',' + end.format('YYYY-MM-DD'));
+            }
+        );
+    }
+
+
+    function addDoEventCondition() {
+        var eventSelectOptionsTag = "";
+        for (var i = 0; i < formBody.events.length; i++) {
+            eventSelectOptionsTag = eventSelectOptionsTag + '<option value=' + formBody.events[i].id + '>' + formBody.events[i].eventLable + '</option>';
+        }
+        var doEventTag = "<tr>" +
+            "<td><select>" + eventSelectOptionsTag + "</select></td>" +
+            "<td><div></div></td>" +
+            "<td id='doEventMeasureTd'><select id='doEventMeasureSelect'></select><select><option value='gt'>大于</option><option value='gte'>大于等于</option><option value='lt'>小于</option><option value='lte'>小于等于</option><option value='eq'>等于</option><option value='neq'>不等于</option></select><input></input></td>" +
+            "<td id='doEventZqTd'><select id='doEventZqSelect'><option value='0'>最近(天)</option><option value='1'>固定时段</option><option value='2'>任意时段</option></select><input value='7'></input></td>" +
+            "<td><input value='0'></input></td>" +
+            "<td><a removeSteps='removeSteps' class='btn btn-sm red'><i class='fa fa-times'></i> 删除 </a></td>" +
+            "</tr>";
+        $("#doEvent > tbody").append(doEventTag);
+
+        $("#doEvent > tbody > tr:last > td#doEventZqTd > select#doEventZqSelect").change(function (e) {
+            $(this).next().remove();
+            if ($(this).val() == '0') {
+                $(this).parent().append("<input value='7'></input>");
+            } else if ($(this).val() == '1') {
+                $(this).parent().append("<input></input>");
+                datarangerinit($(this).next());
+            }
+        });
+
+        var doEventMeasureSelectTag = "";
+        $.each(formBody.doEvent.measures, function (index, val) {
+            doEventMeasureSelectTag = doEventMeasureSelectTag + "<option value='" + val.id + "'>" + val.fieldLable + "</option>"
+        });
+        $('#doEvent > tbody > tr:last > td#doEventMeasureTd > select#doEventMeasureSelect').append(doEventMeasureSelectTag);
+        initFilters($("#doEvent > tbody > tr:last > td:eq(1)"));
+    }
+
+
+    function addDoHitCondition() {
+        var doHitTag = "<tr>" +
+            "<td><div></div></td>" +
+            "<td id='doHitMeasureTd'><select id='doHitMeasureSelect'></select><select><option value='gt'>大于</option><option value='gte'>大于等于</option><option value='lt'>小于</option><option value='lte'>小于等于</option><option value='eq'>等于</option><option value='neq'>不等于</option></select><input></input></td>" +
+            "<td id='doHitZqTd'><select id='doHitZqSelect'><option value='0'>最近(天)</option><option value='1'>固定时段</option><option value='2'>任意时段</option></select><input value='7'></input></td>" +
+            "<td><input value='0'></input></td>" +
+            "<td><a removeSteps='removeSteps' class='btn btn-sm red'><i class='fa fa-times'></i> 删除 </a></td>" +
+            "</tr>";
+        $("#doHit > tbody").append(doHitTag);
+
+        $("#doHit > tbody > tr:last > td#doHitZqTd > select#doHitZqSelect").change(function (e) {
+            $(this).next().remove();
+            if ($(this).val() == '0') {
+                $(this).parent().append("<input value='7'></input>");
+            } else if ($(this).val() == '1') {
+                $(this).parent().append("<input></input>");
+                datarangerinit($(this).next());
+            }
+        });
+        var doHitMeasureSelectTag = "";
+        $.each(formBody.doHit.measures, function (index, val) {
+            doHitMeasureSelectTag = doHitMeasureSelectTag + "<option value='" + val.id + "'>" + val.fieldLable + "</option>"
+        });
+        $('#doHit > tbody > tr:last > td#doHitMeasureTd > select#doHitMeasureSelect').append(doHitMeasureSelectTag);
+        initFilters($("#doHit > tbody > tr:last > td:eq(0)"));
+    }
+
+    function addDoActionCondition() {
+        var doActionTag = "<tr>" +
+            "<td id='doActionZqTd'><select id='doActionZqSelect'><option value='0'>最近(天)</option><option value='1'>固定时段</option><option value='2'>任意时段</option></select></td>" +
+            "<td><input value='7'></input></td>" +
+            "<td><input value='0'></input></td>" +
+            "<td><a removeSteps='removeSteps' class='btn btn-sm red'><i class='fa fa-times'></i> 删除 </a></td>" +
+            "</tr>";
+        $("#doAction > tbody").append(doActionTag);
+
+        $("#doAction > tbody > tr:last > td#doActionZqTd > select#doActionZqSelect").change(function (e) {
+            $(this).parent().next().empty();
+
+
+            if ($(this).val() == '0') {
+                $(this).parent().next().append("<input value='7'></input>");
+            } else if ($(this).val() == '1') {
+                $(this).parent().next().append("<input></input>");
+                datarangerinit($(this).parent().next().children().first());
+            }
+        });
+    }
+
+
+    function initFilters(pNode) {
+        pNode.empty();
+        pNode.append("<div></div>");
+        $.get('/scene/getFilterByChannelIdInEvent', {'channelId': formBody.channelId}, function (data) {
+            var querybuilderObj = pNode.children().first().queryBuilder({
+                filters: data
+            });
+            pNode.parent().data("querybuilderObj", querybuilderObj);
+        }, 'json');
+    }
+
+</script>
+</body>
+
+</html>

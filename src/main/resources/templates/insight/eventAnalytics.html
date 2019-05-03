@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>事件分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="Preview page of Metronic Admin Theme #3 for dashboard & statistics" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
+          type="text/css"/>
+    <link rel="stylesheet" th:href="@{/metronic/assets/global/plugins/font-awesome/css/font-awesome.min.css}">
+    <link th:href="@{/metronic/assets/global/plugins/simple-line-icons/simple-line-icons.min.css}" rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap/css/bootstrap.min.css}" rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css}" rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css}"
+          rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-select/css/bootstrap-select.css}" rel="stylesheet"/>
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link th:href="@{/metronic/assets/global/css/components-md.min.css}" rel="stylesheet" id="style_components"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/css/plugins-md.min.css}" rel="stylesheet" type="text/css"/>
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <link th:href="@{/metronic/assets/layouts/layout3/css/layout.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/metronic/assets/layouts/layout3/css/themes/default.min.css}" rel="stylesheet" type="text/css"
+          id="style_color"/>
+    <link th:href="@{/metronic/assets/layouts/layout3/css/custom.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css"
+          rel="stylesheet"
+          type="text/css"/>
+    <link th:href="@{/metronic/assets/global/plugins/bootstrap-sweetalert/sweetalert.css}" rel="stylesheet"
+          type="text/css"/>
+    <!-- END THEME LAYOUT STYLES -->
+</head>
+<!-- END HEAD -->
+
+<body class="page-container-bg-solid page-md">
+<div class="page-wrapper">
+    <div th:replace="common/header :: header"></div>
+    <div class="page-wrapper-row full-height">
+        <div class="page-wrapper-middle">
+            <!-- BEGIN CONTAINER -->
+            <div class="page-container">
+                <!-- BEGIN CONTENT -->
+                <div class="page-content-wrapper">
+                    <!-- BEGIN CONTENT BODY -->
+                    <!-- BEGIN PAGE HEAD-->
+                    <div class="page-head">
+                        <div class="container">
+                            <!-- BEGIN PAGE TITLE -->
+                            <div class="page-title">
+                                <h1>事件分析
+                                    <small>事件分析</small>
+                                </h1>
+                            </div>
+                            <!-- END PAGE TITLE -->
+                        </div>
+                    </div>
+                    <!-- END PAGE HEAD-->
+                    <!-- BEGIN PAGE CONTENT BODY -->
+                    <div class="page-content">
+                        <div class="container">
+                            <!-- BEGIN PAGE CONTENT INNER -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="portlet light">
+                                        <div class="portlet-body form">
+                                            <div class="form-horizontal form-row-seperated">
+                                                <div class="form-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-3">用户群</label>
+                                                                <div class="col-md-9">
+                                                                    <div id="customerGroupDiv"
+                                                                         class="btn-group bootstrap-select bs-select form-control">
+                                                                        <select id="customerGroupSelect"
+                                                                                class="bs-select form-control">
+                                                                            <option value="">全部用户</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="page-content-inner">
+                                <div class="mt-content-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="portlet light portlet-fit ">
+                                                <div class="portlet-body form">
+                                                    <div class="form-horizontal form-row-seperated">
+                                                        <div class="form-body">
+                                                            <div class="row">
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-3">渠道</label>
+                                                                        <div class="col-md-9">
+                                                                            <div class="btn-group bootstrap-select bs-select form-control">
+                                                                                <select id="channelSelect"
+                                                                                        class="bs-select form-control">
+                                                                                    <option th:each="channel:${channelList}"
+                                                                                            th:value="${channel.id}"
+                                                                                            th:text="${channel.channelName}">
+                                                                                    </option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-3">事件</label>
+                                                                        <div class="col-md-9">
+                                                                            <div id="eventSelectDiv"
+                                                                                 class="btn-group bootstrap-select bs-select form-control">
+                                                                                <select id="eventSelect"
+                                                                                        class="bs-select form-control">
+                                                                                    <option value="">任意事件</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-3">维度</label>
+                                                                        <div class="col-md-9">
+                                                                            <div id="dimensionDiv"
+                                                                                 class="btn-group bootstrap-select bs-select form-control">
+                                                                                <select id="dimensionSelect"
+                                                                                        class="bs-select form-control">
+                                                                                    <option value="">任意维度</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-10">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label col-md-2">筛选</label>
+                                                                        <div class="col-md-10" id="builderDiv">
+                                                                            <div id="builder"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <div class="col-md-10">
+                                                                            <button id="search" class="btn btn-info">
+                                                                                查询
+                                                                            </button>
+
+                                                                            <div class="btn-group">
+                                                                                <button type="button"
+                                                                                        class="btn btn-info">另存为
+                                                                                </button>
+                                                                                <button type="button"
+                                                                                        class="btn btn-info dropdown-toggle"
+                                                                                        data-toggle="dropdown">
+                                                                                    <i class="fa fa-angle-down"></i>
+                                                                                </button>
+                                                                                <ul class="dropdown-menu" role="menu">
+                                                                                    <li>
+                                                                                        <a href="javascript:;">
+                                                                                            到用户群 </a>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <a data-toggle="modal"
+                                                                                           href="#saveAsDashboardPanelModal">
+                                                                                            到数据看板 </a>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="portlet light">
+                                                <div class="portlet-title">
+                                                    <div class="caption">
+                                                        <div id="daterange-btn" class="btn default">
+                                                            <i class="fa fa-calendar"></i> &nbsp;
+                                                            <span>时间</span>
+                                                            <b class="fa fa-angle-down"></b>
+                                                        </div>
+                                                    </div>
+                                                    <div class="actions">
+                                                        <label>指标</label>
+                                                        <div class="btn-group bootstrap-select bs-select">
+                                                            <select id="measureSelect" class="bs-select">
+                                                            </select>
+                                                        </div>
+                                                        <div id="chartType" class="btn-group" data-toggle="buttons">
+                                                            <label chartType="line" class="btn default active">
+                                                                <i class="fa fa-line-chart"></i></label>
+                                                            <label chartType="bar" class="btn default">
+                                                                <i class="fa fa-bar-chart"></i></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="portlet-body">
+                                                    <div id="charts" style="height:600px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END PAGE CONTENT INNER -->
+                        </div>
+                    </div>
+                    <!-- END PAGE CONTENT BODY -->
+                    <!-- END CONTENT BODY -->
+
+
+                    <div class="modal fade" id="saveAsDashboardPanelModal" tabindex="-1" role="basic"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true"></button>
+                                    <h4 class="modal-title">添加到数据看板</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" role="form">
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label">面板名称</label>
+                                                <div class="col-md-9">
+                                                    <input id="pannelName" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-md-3 control-label">数据看板</label>
+                                                <div class="col-md-9">
+                                                    <select id="dashboardSelect" class="form-control">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn dark btn-outline" data-dismiss="modal">关闭</button>
+                                    <button id="saveAsDashboardPanel" type="button" class="btn green">保存</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+
+
+                </div>
+                <!-- END CONTENT -->
+            </div>
+            <!-- END CONTAINER -->
+        </div>
+    </div>
+    <div th:replace="common/footer :: footer"></div>
+</div>
+<!-- BEGIN CORE PLUGINS -->
+
+<script th:src="@{/metronic/assets/global/plugins/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/js.cookie.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/jquery.blockui.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/scripts/app.min.js}" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script th:src="@{/metronic/assets/global/plugins/moment.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js}"
+        type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js}"
+        type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"
+        type="text/javascript"></script>
+<script th:src="@{/querybuilder/dist/i18n/query-builder.zh-CN.js}" type="text/javascript"></script>
+<script th:src="@{/echarts/echarts.min.js}" type="text/javascript"></script>
+<script th:src="@{/metronic/assets/global/plugins/bootstrap-sweetalert/sweetalert.min.js}"
+        type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<script>
+    var filterobj = null;
+    var autodate_type = '0';
+    var dateranger = null;
+    var charts = null;
+
+    function datarangerinit(jqDateRangerBtn, jqDateRangerSpan) {
+        //定义locale汉化插件
+        var locale = {
+            "format": 'YYYY-MM-DD',
+            "separator": " -222 ",
+            "applyLabel": "确定",
+            "cancelLabel": "取消",
+            "fromLabel": "起始时间",
+            "toLabel": "结束时间'",
+            "customRangeLabel": "自定义",
+            "weekLabel": "W",
+            "daysOfWeek": ["日", "一", "二", "三", "四", "五", "六"],
+            "monthNames": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "firstDay": 1
+        };
+        //初始化显示当前时间
+        jqDateRangerSpan.html(moment().subtract('hours', 1).format('YYYY-MM-DD') + ' - ' + moment().format(
+            'YYYY-MM-DD'));
+        dateranger = moment().format('YYYY-MM-DD') + ',' + moment().format('YYYY-MM-DD');
+        //日期控件初始化
+        jqDateRangerBtn.daterangepicker({
+                'locale': locale,
+                //汉化按钮部分
+                ranges: {
+                    '今日': [moment(), moment()],
+                    '昨日': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    '最近7日': [moment().subtract(6, 'days'), moment()],
+                    '最近30日': [moment().subtract(29, 'days'), moment()],
+                    '本月': [moment().startOf('month'), moment().endOf('month')],
+                    '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf(
+                        'month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+            function (start, end) {
+                jqDateRangerSpan.html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+            }
+        );
+        jqDateRangerBtn.on('apply.daterangepicker', function (ev, picker) {
+            switch (picker.chosenLabel) {
+                case '今日': {
+                    autodate_type = '0';
+                    break;
+                }
+                case '昨日': {
+                    autodate_type = '1';
+                    break;
+                }
+                case '最近7日': {
+                    autodate_type = '2';
+                    break;
+                }
+                case '最近30日': {
+                    autodate_type = '3';
+                    break;
+                }
+                case '本月': {
+                    autodate_type = '4';
+                    break;
+                }
+                case '上月': {
+                    autodate_type = '5';
+                    break;
+                }
+                case '自定义': {
+                    autodate_type = '6';
+                    break;
+                }
+            }
+            jqDateRangerBtn.html(picker.chosenLabel + '|' + picker.startDate.format('YYYY-MM-DD') +
+                ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            dateranger = picker.startDate.format('YYYY-MM-DD') + ',' + picker.endDate.format('YYYY-MM-DD');
+        });
+        return dateranger;
+    }
+
+    function customerGroupSelectInit() {
+        $("#customerGroupDiv").empty();
+        var tag =
+            '<select id="customerGroupSelect" class="bs-select form-control"> <option value="">全部用户</option></select>';
+        $("#customerGroupDiv").append(tag);
+        var optionTag = "";
+        $.get("/customer/getCustomerGroupList", {
+                channelId: $("#channelSelect").val()
+            },
+            function (data) {
+                $.each(data, function (index, val) {
+                    optionTag = optionTag + '<option value="' + data[index].id + '">' + data[index].groupName +
+                        '</option>';
+                    $("#customerGroupSelect").append(optionTag);
+                });
+                $("#customerGroupSelect").selectpicker();
+            },
+            "json"
+        );
+    }
+
+    $(document).ready(function () {
+        charts = echarts.init(document.getElementById('charts'));
+        $("select").selectpicker();
+        eventSelectInit();
+        dimensionSelectInit();
+        measureSelectInit();
+        customerGroupSelectInit();
+
+        $(document).on("change", "#channelSelect,#eventSelect,#dimensionSelect", function () {
+            var o_id = $(this).attr('id');
+            if (o_id == 'channelSelect') {
+                eventSelectInit();
+                measureSelectInit();
+                customerGroupSelectInit();
+            } else if (o_id == 'eventSelect') {
+                dimensionSelectInit();
+            }
+        });
+
+        dateranger = datarangerinit($('#daterange-btn'), $('#daterange-btn span'));
+        $("#chartType label").bind('click', function () {
+            $("#chartType label").removeClass('active');
+            $(this).addClass('active');
+        });
+
+        $('#search').click(function () {
+            var filter = $('#builder').queryBuilder('getSQL') == null ? '' : $('#builder').queryBuilder(
+                'getSQL').sql;
+            $.post('/insight/eventAnalytics', {
+                channelId: $("#channelSelect").val(),
+                eventId: $("#eventSelect").val(),
+                dimension: $("#dimensionSelect").val(),
+                measureId: $("#measureSelect").val(),
+                chartType: $("#chartType .active").attr("chartType"),
+                dateranger: dateranger,
+                filter: filter,
+                autodate: autodate_type,
+                customerGroupId: $("#customerGroupSelect").val()
+            }, function (data) {
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: data.legend,
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: data.xAxis,
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: data.series
+                };
+
+                charts.setOption(option, true);
+
+            }, 'json');
+        });
+
+
+        $('#saveAsDashboardPanelModal').on('show.bs.modal', function () {
+            $.get("/dashboard/getDashboardList", {
+                'channelId': $("#channelSelect").val()
+            }, function (data) {
+                $.each(data, function (i, val) {
+                    $("#dashboardSelect").append("<option value='" + val.id + "'>" +
+                        val.dashboardName + "</option>");
+                });
+                $('#dashboardSelect').selectpicker('refresh');
+            }, 'json');
+        });
+
+
+        $("#saveAsDashboardPanel").click(function () {
+            var filter = $('#builder').queryBuilder('getSQL') == null ? '' : $('#builder').queryBuilder(
+                'getSQL').sql;
+            var cubeDsl = {};
+            cubeDsl.analyticsModelType = 'event';
+            cubeDsl.customerGroupId = $("#customerGroupSelect").val();
+            cubeDsl.measureId = $("#measureSelect").val();
+            cubeDsl.dimension = $("#dimensionSelect").val();
+            cubeDsl.chartType = $("#chartType .active").attr("chartType");
+            cubeDsl.eventId = $("#eventSelect").val(),
+                $.post("/dashboard/saveDashboardPanel", {
+                    panelName: $("#pannelName").val(),
+                    autodateType: autodate_type,
+                    dateranger: dateranger,
+                    dashboardId: $("#dashboardSelect").val(),
+                    cubeDsl: JSON.stringify(cubeDsl),
+                    filter: filter,
+                    analyticsType: 'event',
+                }, function (data) {
+                    if (data.code == '0') {
+                        swal("保存成功", "", "success");
+                    } else {
+                        swal("保存失败", "", "danger");
+                    }
+                    $('#saveAsDashboardPanelModal').hide();
+                }, "json");
+        });
+
+
+    });
+
+    function eventSelectInit() {
+        $.get('/scene/getEventsByChannelId', {
+            'channelId': $("#channelSelect").val()
+        }, function (data) {
+            $("#eventSelect").empty();
+            $("#eventSelect").append('<option value="">任意事件</option>');
+            for (var i = 0; i < data.length; i++) {
+                $("#eventSelect").append('<option value=' + data[i].id + '>' + data[i].eventLable +
+                    '</option>');
+            }
+            $('#eventSelect').selectpicker('refresh');
+            $.get('/scene/getFilterByChannelIdInEvent', {
+                'channelId': $("#channelSelect").val()
+            }, function (data) {
+                $("#builderDiv").empty();
+                $("#builderDiv").append("<div id='builder'></div>")
+                filterobj = $('#builder').queryBuilder({
+                    filters: data
+                });
+            }, 'json');
+
+        }, 'json');
+    }
+
+    function measureSelectInit() {
+        $.get('/scene/getMeasureInEventLayerByChannelId', {
+            'channelId': $("#channelSelect").val()
+        }, function (data) {
+            $("#measureSelect").empty();
+            for (var i = 0; i < data.length; i++) {
+                $("#measureSelect").append('<option value=' + data[i].id + '>' + data[i].fieldLable +
+                    '</option>');
+            }
+            $('#measureSelect').selectpicker('refresh');
+        }, 'json');
+    }
+
+
+    function dimensionSelectInit() {
+        $.get('/scene/getDimensionByEventId', {
+            'eventId': $("#eventSelect").val(),
+            'channelId': $("#channelSelect").val()
+        }, function (data) {
+            $("#dimensionSelect").empty();
+            $("#dimensionSelect").append('<option value="">任意维度</option>');
+            for (var i = 0; i < data.length; i++) {
+                $("#dimensionSelect").append('<option value=' + data[i].fieldName + '>' + data[i].fieldLable +
+                    '</option>');
+            }
+            $("#dimensionSelect").data('optionData', data);
+            $('#dimensionSelect').selectpicker('refresh');
+        }, 'json');
+    }
+</script>
+</body>
+
+</html>
