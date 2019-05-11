@@ -34,7 +34,7 @@ public class CustomerController {
 
     @RequestMapping("getCustomerFieldsByChannelId")
     @ResponseBody
-    public List<CustomerField> getCustomerFieldsByChannelId(Integer channelId) {
+    public List<CustomerField> getCustomerFieldsByChannelId(String channelId) {
         return this.customerService.findCustomerFieldsByChannelId(channelId);
     }
 
@@ -116,14 +116,14 @@ public class CustomerController {
 
     @RequestMapping("getCustomerFields")
     @ResponseBody
-    public List<CustomerField> getCustomerFields(Integer channelId) {
+    public List<CustomerField> getCustomerFields(String channelId) {
         return customerService.findCustomerFieldsByChannelId(channelId);
     }
 
 
     @RequestMapping("getCustomerList")
     @ResponseBody
-    public Map<String, Object> getCustomerList(Integer channelId, String customerGroupId, String filter, String orderFieldId) {
+    public Map<String, Object> getCustomerList(String channelId, String customerGroupId, String filter, String orderFieldId) {
         Map<String, Object> map = new HashMap<>();
         map.put("data", customerService.getCustomerList(channelId, customerGroupId, filter, orderFieldId));
         map.put("customerCount", customerService.getCustomerCount(channelId, customerGroupId, filter));
@@ -133,7 +133,7 @@ public class CustomerController {
 
     @RequestMapping("getCustomerCount")
     @ResponseBody
-    public Long getCustomerCount(Integer channelId, String customerGroupId, String filter, String orderFieldId) {
+    public Long getCustomerCount(String channelId, String customerGroupId, String filter, String orderFieldId) {
         return customerService.getCustomerCount(channelId, customerGroupId, filter);
     }
 

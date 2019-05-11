@@ -47,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerField> findCustomerFieldsByChannelId(Integer channelId) {
+    public List<CustomerField> findCustomerFieldsByChannelId(String channelId) {
         return customerFieldRepository.findByChannelId(channelId);
     }
 
@@ -99,12 +99,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerField> findCustomerFieldListByChannelId(Integer channelId) {
+    public List<CustomerField> findCustomerFieldListByChannelId(String channelId) {
         return customerFieldRepository.findByChannelId(channelId);
     }
 
     @Override
-    public List<List<Object>> getCustomerList(Integer channelId, String customerGroupId, String filter, String orderFieldId) {
+    public List<List<Object>> getCustomerList(String channelId, String customerGroupId, String filter, String orderFieldId) {
         List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId);
         CustomerTemplate customerTemplate = customerFieldList.get(0).getCustomerTemplate();
         StringBuffer select = new StringBuffer(" SELECT ");
@@ -138,7 +138,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Long getCustomerCount(Integer channelId, String customerGroupId, String filter) {
+    public Long getCustomerCount(String channelId, String customerGroupId, String filter) {
         List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId);
         CustomerTemplate customerTemplate = customerFieldList.get(0).getCustomerTemplate();
         StringBuffer select = new StringBuffer(" SELECT count(1) ");

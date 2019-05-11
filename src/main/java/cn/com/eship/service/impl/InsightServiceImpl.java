@@ -70,7 +70,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
         if (StringUtils.isNotBlank(filter)) {
             sqlConstructor.filter(" AND " + filter);
         }
-        if (eventId != null) {
+        if (StringUtils.isNotBlank(eventId)) {
             Event event = eventRepository.findById(eventId).get();
             sqlConstructor.filter(String.format(" AND %s.%s = '%s'", eventBehavior.getAlias(),
                     ContextSetting.COMMON_EVENT_DIMENSION, event.getEventName()));
@@ -86,17 +86,17 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             sqlConstructor.joinCustomerGroup(customerGroup, keyField);
         }
 
-        if ("line".equals(chartType) || chartType == null) {
+        if ("line".equals(chartType) || StringUtils.isBlank(chartType)) {
             //无维度无事件 显示按照时间和事件分组
-            if (StringUtils.isBlank(dimension) && eventId == null) {
+            if (StringUtils.isBlank(dimension) && StringUtils.isBlank(eventId)) {
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION).agg(ContextSetting.COMMON_DATE_DIMENSION);
             }
             //有维度有事件 显示按照时间和维度进行分组
-            else if (StringUtils.isNotBlank(dimension) && eventId != null) {
+            else if (StringUtils.isNotBlank(dimension) && StringUtils.isNotBlank(eventId)) {
                 sqlConstructor.agg(dimension).agg(ContextSetting.COMMON_DATE_DIMENSION);
             }
             //有事件无维度 显示按照时间进行分组
-            else if (StringUtils.isBlank(dimension) && eventId != null) {
+            else if (StringUtils.isBlank(dimension) && StringUtils.isNotBlank(eventId)) {
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION).agg(ContextSetting.COMMON_DATE_DIMENSION);
             }
             String sql = sqlConstructor.measure(measure.getFieldName()).getSql();
@@ -126,15 +126,15 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
 
         } else if ("bar".equals(chartType)) {
             //无维度 无事件
-            if (StringUtils.isBlank(dimension) && eventId == null) {
+            if (StringUtils.isBlank(dimension) && StringUtils.isBlank(eventId)) {
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION);
             }
             //有维度 有事件
-            else if (StringUtils.isNotBlank(dimension) && eventId != null) {
+            else if (StringUtils.isNotBlank(dimension) && StringUtils.isNotBlank(eventId)) {
                 sqlConstructor.agg(dimension);
             }
             //无维度 有事件
-            else if (eventId != null && StringUtils.isBlank(dimension)) {
+            else if (StringUtils.isNotBlank(eventId) && StringUtils.isBlank(dimension)) {
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION);
             }
             String sql = sqlConstructor.measure(measure.getFieldName()).getSql();

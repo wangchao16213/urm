@@ -10,7 +10,7 @@ import java.util.List;
 public interface CustomerService {
     public List<CustomerField> findCustomerFields(CustomerField customerField);
 
-    public List<CustomerField> findCustomerFieldsByChannelId(Integer channelId);
+    public List<CustomerField> findCustomerFieldsByChannelId(String channelId);
 
     public List<Channel> findChannelList(Channel channel);
 
@@ -23,8 +23,8 @@ public interface CustomerService {
 
     public void deleteCustomerGroupById(String customerGroupId);
 
-    public List<CustomerField> findCustomerFieldListByChannelId(Integer channelId);
+    public List<CustomerField> findCustomerFieldListByChannelId(String channelId);
 
-    List<List<Object>> getCustomerList(Integer channelId, String customerGroupId, String filter,String orderFieldId);
-    public Long getCustomerCount(Integer channelId, String customerGroupId, String filter);
+    List<List<Object>> getCustomerList(String channelId, String customerGroupId, String filter,String orderFieldId);
+    public Long getCustomerCount(String channelId, String customerGroupId, String filter);
 }
