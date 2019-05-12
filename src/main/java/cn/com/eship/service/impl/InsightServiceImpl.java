@@ -62,6 +62,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
 
     @Override
     public EventAnalyticsVo eventAnalytics(String channelId, String eventId, String dimension, String measureId, String chartType, String dateranger, String filter, String customerGroupId) {
+        Map<String,String> eventDict = getEventDict(channelId);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         EventAnalyticsVo eventAnalyticsVo = new EventAnalyticsVo();
         Behavior eventBehavior = behaviorRepository.findEventBehaviorByChannelId(channelId);
@@ -85,10 +86,11 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             BehaviorField keyField = behaviorFieldRepository.findKeyFieldByBehavioId(eventBehavior.getId());
             sqlConstructor.joinCustomerGroup(customerGroup, keyField);
         }
-
+        boolean flag = false;
         if ("line".equals(chartType) || StringUtils.isBlank(chartType)) {
             //无维度无事件 显示按照时间和事件分组
             if (StringUtils.isBlank(dimension) && StringUtils.isBlank(eventId)) {
+                flag = true;
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION).agg(ContextSetting.COMMON_DATE_DIMENSION);
             }
             //有维度有事件 显示按照时间和维度进行分组
@@ -97,6 +99,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             }
             //有事件无维度 显示按照时间进行分组
             else if (StringUtils.isBlank(dimension) && StringUtils.isNotBlank(eventId)) {
+                flag = true;
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION).agg(ContextSetting.COMMON_DATE_DIMENSION);
             }
             String sql = sqlConstructor.measure(measure.getFieldName()).getSql();
@@ -105,11 +108,13 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             Map<String, Object> seriesTemp = new HashMap<>();
 
             for (List<Object> dataTuple : dataset) {
-                Object seriesItem = seriesTemp.get(dataTuple.get(0));
+                String key = flag?eventDict.get((String) dataTuple.get(0)):(String) dataTuple.get(0);
+                Object seriesItem = seriesTemp.get(key);
+                //TODO 设置字典
                 if (seriesItem == null) {
-                    seriesTemp.put((String) dataTuple.get(0), getDateSeq(dateranger));
+                    seriesTemp.put(key, getDateSeq(dateranger));
                 }
-                ((Map<String, Object>) seriesTemp.get(dataTuple.get(0))).put(simpleDateFormat.format(dataTuple.get(1)), dataTuple.get(2));
+                ((Map<String, Object>) seriesTemp.get(key)).put(simpleDateFormat.format(dataTuple.get(1)), dataTuple.get(2));
             }
 
             List<String> datelist = DateUtilsHelper.getDateListByRangeer(dateranger);
@@ -127,6 +132,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
         } else if ("bar".equals(chartType)) {
             //无维度 无事件
             if (StringUtils.isBlank(dimension) && StringUtils.isBlank(eventId)) {
+                flag = true;
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION);
             }
             //有维度 有事件
@@ -135,14 +141,17 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             }
             //无维度 有事件
             else if (StringUtils.isNotBlank(eventId) && StringUtils.isBlank(dimension)) {
+                flag = true;
                 sqlConstructor.agg(ContextSetting.COMMON_EVENT_DIMENSION);
             }
-            String sql = sqlConstructor.measure(measure.getFieldName()).getSql();
+            String sql = sqlConstructor.measure(measure.getFieldName()).order(measure.getFieldName(),"DESC").limit("20").getSql();
             List<List<Object>> dataset = dataWarehouseRepository.commonData(sql);
 
             Map<String, Object> seriesTemp = new HashMap<>();
             for (List<Object> dataTuple : dataset) {
-                seriesTemp.put((String) dataTuple.get(0), dataTuple.get(1));
+                //TODO 设置字典
+                String key = flag?eventDict.get((String) dataTuple.get(0)):(String) dataTuple.get(0);
+                seriesTemp.put(key, dataTuple.get(1));
             }
             eventAnalyticsVo.getxAxis().put("data", seriesTemp.keySet());
             List<Object> legendData = new ArrayList<>();
@@ -352,5 +361,16 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             funnelAnalyticsVo.getSeries().add(map);
         }
         return funnelAnalyticsVo;
+    }
+
+
+
+    private Map<String,String> getEventDict(String channelId){
+        List<Event> events = eventRepository.findAllByChannelId(channelId);
+        Map<String, String> dict = new HashMap<>();
+        events.forEach(event -> {
+            dict.put(event.getEventName(),event.getEventLable());
+        });
+        return dict;
     }
 }

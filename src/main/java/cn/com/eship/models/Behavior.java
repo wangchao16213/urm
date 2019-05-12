@@ -20,6 +20,7 @@ public class Behavior {
     private String behaviorType;
     private String synStatus;
     private Channel channel;
+    private String fullTableName;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -151,6 +152,19 @@ public class Behavior {
                 Objects.equals(alias, behavior.alias) &&
                 Objects.equals(behaviorType, behavior.behaviorType) &&
                 Objects.equals(synStatus, behavior.synStatus);
+    }
+
+
+    @Transient
+    public String getFullTableName() {
+        if (StringUtils.isBlank(this.getAlias())) {
+            return getNamespace() + "." + getTbName() + " " + getTbName();
+        }
+        return getNamespace() + "." + getTbName() + " " + getAlias();
+    }
+
+    public void setFullTableName(String fullTableName) {
+        this.fullTableName = fullTableName;
     }
 
     @Override

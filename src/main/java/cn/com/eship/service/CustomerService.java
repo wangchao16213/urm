@@ -6,6 +6,7 @@ import cn.com.eship.models.CustomerGroup;
 import cn.com.eship.models.CustomerTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerService {
     public List<CustomerField> findCustomerFields(CustomerField customerField);
@@ -27,4 +28,8 @@ public interface CustomerService {
 
     List<List<Object>> getCustomerList(String channelId, String customerGroupId, String filter,String orderFieldId);
     public Long getCustomerCount(String channelId, String customerGroupId, String filter);
+
+    public List<Map<String, Object>> getCustomerById(String customerId,String channelId);
+
+    public List<Map<String,Object>> getEventLogList(String customerId,String channelId);
 }

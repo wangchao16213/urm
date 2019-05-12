@@ -179,13 +179,12 @@
         /**
          * 判断页面是否从客户群跳转过来的
          */
-        if(customerGroupId != null && customerGroupId != ''){
+        if (customerGroupId != null && customerGroupId != '') {
             $("#channelSelect").val(channelId);
             $("#channelSelect").selectpicker('refresh');
             initCustomerGroupSelect();
 
         }
-
 
 
         customerGroupTable();
@@ -213,7 +212,7 @@
             $('#customerGroupSelect').selectpicker('refresh');
 
             //从客户群跳转过来的逻辑
-            if (customerGroupId != null && customerGroupId != ''){
+            if (customerGroupId != null && customerGroupId != '') {
                 $("#customerGroupSelect").val(channelId);
                 $("#customerGroupSelect").selectpicker('refresh');
             }
@@ -250,8 +249,14 @@
                 $("#customerCounter").append(data + "人");
             }, 'json');
 
-            $('#customerListTable').DataTable({
+            $('#customerListTable').dataTable({
                 language: language,
+                "columnDefs": [{
+                    "render": function (data, type, row) {
+                        return '<a href="/customer/customerProfilePage?customerId=' + data + '&channelId=' + $("#channelSelect").val() + '" >' + data + '</a>';
+                    },
+                    "targets": 0
+                }],
                 "destroy": true,//如果需要重新加载的时候请加上这个
                 "processing": true,
                 "ajax": "/customer/getCustomerList?channelId=" + $("#channelSelect").val() + "&customerGroupId=" + $('#customerGroupSelect').val(),

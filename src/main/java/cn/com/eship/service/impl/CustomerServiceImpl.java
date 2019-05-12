@@ -1,30 +1,24 @@
 package cn.com.eship.service.impl;
 
 import cn.com.eship.context.ContextSetting;
-import cn.com.eship.models.Channel;
-import cn.com.eship.models.CustomerField;
-import cn.com.eship.models.CustomerGroup;
-import cn.com.eship.models.CustomerTemplate;
-import cn.com.eship.repository.ChannelRepository;
-import cn.com.eship.repository.CustomerFieldRepository;
-import cn.com.eship.repository.CustomerGroupRepository;
-import cn.com.eship.repository.DataWarehouseRepository;
+import cn.com.eship.models.*;
+import cn.com.eship.repository.*;
 import cn.com.eship.repository.specifications.ChannelSpecification;
 import cn.com.eship.repository.specifications.CustomerFieldSpecification;
 import cn.com.eship.repository.specifications.CustomerGroupSpecification;
 import cn.com.eship.service.CustomerService;
+import cn.com.eship.service.SceneService;
 import cn.com.eship.tasks.CustomerGroupTask;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @EnableTransactionManagement()
 @Service
@@ -39,6 +33,10 @@ public class CustomerServiceImpl implements CustomerService {
     private DataWarehouseRepository dataWarehouseRepository;
     @Autowired
     private CustomerGroupTask customerGroupTask;
+    @Autowired
+    private BehaviorFieldRepository behaviorFieldRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
     @Override
     public List<CustomerField> findCustomerFields(CustomerField customerField) {
@@ -48,7 +46,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerField> findCustomerFieldsByChannelId(String channelId) {
-        return customerFieldRepository.findByChannelId(channelId);
+        Sort sort = new Sort("sortNum");
+        return customerFieldRepository.findByChannelId(channelId,sort);
     }
 
     @Override
@@ -100,12 +99,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerField> findCustomerFieldListByChannelId(String channelId) {
-        return customerFieldRepository.findByChannelId(channelId);
+        Sort sort = new Sort("sortNum");
+        return customerFieldRepository.findByChannelId(channelId,sort);
     }
 
     @Override
     public List<List<Object>> getCustomerList(String channelId, String customerGroupId, String filter, String orderFieldId) {
-        List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId);
+        Sort sort = new Sort("sortNum");
+        List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId,sort);
         CustomerTemplate customerTemplate = customerFieldList.get(0).getCustomerTemplate();
         StringBuffer select = new StringBuffer(" SELECT ");
         StringBuffer join = new StringBuffer();
@@ -139,7 +140,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Long getCustomerCount(String channelId, String customerGroupId, String filter) {
-        List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId);
+        Sort sort = new Sort("sortNum");
+        List<CustomerField> customerFieldList = customerFieldRepository.findByChannelId(channelId,sort);
         CustomerTemplate customerTemplate = customerFieldList.get(0).getCustomerTemplate();
         StringBuffer select = new StringBuffer(" SELECT count(1) ");
         StringBuffer join = new StringBuffer();
@@ -167,6 +169,101 @@ public class CustomerServiceImpl implements CustomerService {
         }
         String sql = select.append(from).append(join).append(where).toString();
         return (Long) dataWarehouseRepository.commonData(sql).get(0).get(0);
+    }
+
+    @Override
+    public List<Map<String, Object>> getCustomerById(String customerId,String channelId) {
+        Sort sort = new Sort("sortNum");
+        List<CustomerField> customerFieldList =  customerFieldRepository.findByChannelId(channelId,sort);
+        List<Map<String,Object>> result = new ArrayList<>();
+        if (customerFieldList != null && customerFieldList.size() > 0){
+            StringBuffer selectPart = new StringBuffer("SELECT ");
+            StringBuffer fromPart = new StringBuffer(" FROM " + customerFieldList.get(0).getCustomerTemplate().getFullTableName());
+            StringBuffer wherePart = new StringBuffer(" WHERE " + customerFieldRepository.findPrimariField(channelId).getFullFieldName() + "= '" + customerId + "'");
+            customerFieldList.forEach(customerField -> {
+                selectPart.append(customerField.getFullFieldName()).append(",");
+                Map<String,Object> item = new HashMap<>();
+                item.put("lable",customerField.getFieldLable());
+                item.put("value",null);
+                result.add(item);
+            });
+            String sql = selectPart.deleteCharAt(selectPart.length() - 1).append(fromPart).append(wherePart).toString();
+            List<Object> data = dataWarehouseRepository.commonData(sql).get(0);
+            for (int i =0;i < result.size();i++){
+                result.get(i).put("value",data.get(i));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<Map<String, Object>> getEventLogList(String customerId, String channelId) {
+        Sort sort = new Sort("sortNum");
+        List<BehaviorField> behaviorFieldList = behaviorFieldRepository.findDimensionByChannelIdAndBehaviorType(channelId,"2",sort);
+        StringBuffer selectPart = new StringBuffer("SELECT ");
+        StringBuffer fromPart = new StringBuffer(" FROM " + behaviorFieldList.get(0).getBehavior().getFullTableName());
+        StringBuffer wherePart = new StringBuffer(" WHERE event1.event_id != 'PageView' and " + behaviorFieldRepository.findEventPrimariField(channelId).getFullFieldName() + "= '" + customerId + "'");
+
+        behaviorFieldList.forEach(customerField -> {
+            selectPart.append(customerField.getFullFieldName()).append(",");
+        });
+        List<Map<String,Object>> result = new ArrayList<>();
+        String sql = selectPart.deleteCharAt(selectPart.length() - 1).append(fromPart).append(wherePart).append(" order by event1.create_timestamp desc limit 20").toString();
+        List<List<Object>> data = dataWarehouseRepository.commonData(sql);
+        Map<String,String> eventDict = getEventDict(channelId);
+        //获取事件所处的位置
+        int eventPosition = findSpecialField(behaviorFieldList,"1");
+        int datetimePosition = findSpecialField(behaviorFieldList,"0");
+        for (int i =0;i < data.size();i++){
+            String event_id = (String) data.get(i).get(eventPosition);
+            String eventLable = eventDict.get(event_id);
+            String dateTime = (String) data.get(i).get(datetimePosition);
+            Map<String,Object> item = new HashMap<>();
+            item.put("event",eventLable);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long lt = new Long(dateTime);
+            Date date = new Date(lt);
+            item.put("datetime",simpleDateFormat.format(date));
+            item.put("data",convertData(behaviorFieldList,data.get(i)));
+            result.add(item);
+        }
+        return result;
+    }
+
+    /**
+     * 查找特殊的维度的索引  例如时间戳维度 0 和 事件维度 1
+     * @return
+     */
+    private int findSpecialField( List<BehaviorField> behaviorFieldList,String type){
+        String fieldName = type.equals("0")?"create_timestamp":"event_id";
+        int result = -1;
+        for(int i =0;i < behaviorFieldList.size();i++){
+            if (behaviorFieldList.get(i).getFieldName().equals(fieldName)){
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private Map<String,String> getEventDict(String channelId){
+        List<Event> events = eventRepository.findAllByChannelId(channelId);
+        Map<String, String> dict = new HashMap<>();
+        events.forEach(event -> {
+            dict.put(event.getEventName(),event.getEventLable());
+        });
+        return dict;
+    }
+
+    private List<Map<String,Object>> convertData(List<BehaviorField> behaviorFieldList,List<Object> data){
+        List<Map<String,Object>> result = new ArrayList<>();
+        for (int i =0;i < behaviorFieldList.size();i++){
+            Map<String,Object> item = new HashMap<>();
+            item.put("lable",behaviorFieldList.get(i).getFieldLable());
+            item.put("value",data.get(i));
+            result.add(item);
+        }
+        return result;
     }
 
 

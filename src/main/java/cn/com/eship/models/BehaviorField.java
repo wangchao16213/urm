@@ -163,6 +163,8 @@ public class BehaviorField {
         return behavior.getAlias() + "." + fieldName;
     }
 
+
+
     @Transient
     public String getFieldTypeText() {
         String result = null;

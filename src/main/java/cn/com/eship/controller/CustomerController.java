@@ -8,6 +8,7 @@ import cn.com.eship.models.CustomerGroup;
 import cn.com.eship.models.enums.BehaviorFieldType;
 import cn.com.eship.models.enums.BehaviorType;
 import cn.com.eship.service.CustomerService;
+import cn.com.eship.service.SceneService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ import java.util.Map;
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private SceneService sceneService;
 
     @RequestMapping("customerFields")
     @ResponseBody
@@ -135,6 +139,30 @@ public class CustomerController {
     @ResponseBody
     public Long getCustomerCount(String channelId, String customerGroupId, String filter, String orderFieldId) {
         return customerService.getCustomerCount(channelId, customerGroupId, filter);
+    }
+    @RequestMapping("customerProfilePage")
+    public String customerProfilePage(String customerId,String channelId,Model model){
+        //查询事件下的所有维度
+        List<BehaviorField> behaviorFieldList = sceneService.findDimensionByChannelIdAndBehaviorType(channelId,"2");
+        model.addAttribute("customer",customerService.getCustomerById(customerId,channelId));
+        model.addAttribute("behaviorFieldList",behaviorFieldList);
+        model.addAttribute("customerId",customerId);
+        model.addAttribute("channelId",channelId);
+        return "customer/customerProfile";
+    }
+
+
+    @RequestMapping("behaviorFieldList")
+    @ResponseBody
+    public List<BehaviorField> behaviorFieldList(String channelId){
+        List<BehaviorField> behaviorFieldList = sceneService.findDimensionByChannelIdAndBehaviorType(channelId,"2");
+        return behaviorFieldList;
+    }
+
+    @RequestMapping("eventLogList")
+    @ResponseBody
+    public List<Map<String,Object>> eventLogList(String customerId,String channelId){
+        return customerService.getEventLogList(customerId,channelId);
     }
 
 }

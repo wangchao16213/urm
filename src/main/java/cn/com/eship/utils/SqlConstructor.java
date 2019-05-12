@@ -96,7 +96,7 @@ public class SqlConstructor {
     public SqlConstructor order(String order, String type) {
         if (StringUtils.isNotBlank(limit)) {
             this.orderFlag = true;
-            this.order.append(behavior.getAlias() + "." + order);
+            this.order.append(order);
         }
         if (StringUtils.isNotBlank(type)) {
             this.order.append(" " + type);
