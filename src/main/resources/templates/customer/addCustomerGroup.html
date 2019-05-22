@@ -36,10 +36,10 @@
           type="text/css"
           id="style_color"/>
     <link th:href="@{/metronic/assets/layouts/layout3/css/custom.min.css}" rel="stylesheet" type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css"
+    <link th:href="@{/querybuilder/dist/css/query-builder.default.min.css}"
           rel="stylesheet"
           type="text/css"/>
-    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link th:href="@{/tables/jquery.dataTables.min.css}" rel="stylesheet" type="text/css">
 
     <link rel="shortcut icon" href="favicon.ico"/>
     <style>
@@ -172,6 +172,7 @@
                                                                             <option value="0">静态集合</option>
                                                                             <option value="1">分群引擎</option>
                                                                             <option value="2">SQL脚本</option>
+                                                                            <option value="3">分群集合计算</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -287,39 +288,6 @@
                                                                 </div>
                                                             </div>
 
-
-                                                            <h3 class="form-section">用户标签满足于</h3>
-                                                            <!--/row-->
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <table id="doEvent1"
-                                                                           class="table table-hover table-light">
-                                                                        <thead>
-                                                                        <tr class="uppercase">
-                                                                            <th> 事件</th>
-                                                                            <th> 过滤器</th>
-                                                                            <th> 周期</th>
-                                                                            <th> 操作</th>
-                                                                        </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                                <div class="col-md-12">
-                                                                    <div class="form-group">
-                                                                        <div class="col-md-12">
-                                                                            <button id="addStepBtn" type="button"
-                                                                                    class="btn green mt-ladda-btn btn-sm ladda-button btn-circle"
-                                                                                    data-style="slide-down">
-                                                                                <span class="ladda-label">或者</span>
-                                                                                <span class="ladda-spinner"></span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
                                                         </div>
 
                                                         <div id="sqlscript">
@@ -341,6 +309,32 @@
                                                             comment! */
                                                             LIMIT 1 OFFSET 0;
                                                         </textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div id="fqjhjs">
+                                                            <h3 class="form-section">客户群运算</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+
+                                                                    <table>
+                                                                        <tr>
+                                                                            <td><input id="khqInput" type="text"
+                                                                                       value=""
+                                                                                       data-role="tagsinput"/></td>
+                                                                            <td><select id="groupListSelect"></select></td>
+                                                                            <td>
+                                                                                <button>添加</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+
+
+                                                                </div>
+                                                                <div class="col-md-3">
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -405,7 +399,7 @@
         type="text/javascript"></script>
 <script th:src="@{/metronic/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js}"
         type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"
+<script th:src="@{/querybuilder/dist/js/query-builder.standalone.js}"
         type="text/javascript"></script>
 <script th:src="@{/querybuilder/dist/i18n/query-builder.zh-CN.js}" type="text/javascript"></script>
 <script th:src="@{/echarts/echarts.min.js}" type="text/javascript"></script>
@@ -428,19 +422,24 @@
         }
     };
 
+    var customerGroupList = [];
+
     $(document).ready(function () {
         $("select").selectpicker();
         $("#nzfqyq").hide();
         $("#sqlscript").hide();
+        $("#fqjhjs").hide();
         initEvents();
         initMeasureByEvent();
         initMeasureByHit();
+        getGroupList();
         $("#channelSelect").change(function () {
             $("table > tbody").empty();
             formBody.channelId = $("#channelSelect").val();
             initEvents();
             initMeasureByEvent();
             initMeasureByHit();
+            getGroupList();
         });
 
 
@@ -569,14 +568,23 @@
             if ($(this).val() == '0') {
                 $("#nzfqyq").hide();
                 $("#sqlscript").hide();
+                $("#fqjhjs").hide();
+
             }
             if ($(this).val() == '1') {
                 $("#nzfqyq").show();
                 $("#sqlscript").hide();
+                $("#fqjhjs").hide();
             }
             if ($(this).val() == '2') {
                 $("#nzfqyq").hide();
                 $("#sqlscript").show();
+                $("#fqjhjs").hide();
+            }
+            if ($(this).val() == '3') {
+                $("#nzfqyq").hide();
+                $("#sqlscript").hide();
+                $("#fqjhjs").show();
             }
         });
     });
@@ -735,6 +743,24 @@
             });
             pNode.parent().data("querybuilderObj", querybuilderObj);
         }, 'json');
+    }
+
+
+    function getGroupList() {
+        $('#groupListSelect').empty();
+        $.get('/customer/getCustomerGroupList', {channelId: $("#channelSelect").val()}, function (data) {
+            customerGroupList = data;
+            $.each(data, function (i, v) {
+                var tag = "<option value='" + v.id + "'>" + v.groupName + "</option>";
+                $('#groupListSelect').append(tag);
+            });
+            $('#groupListSelect').selectpicker('refresh');
+        }, 'json');
+    }
+
+
+    function printValue() {
+        console.log($("#khqInput").val());
     }
 
 </script>

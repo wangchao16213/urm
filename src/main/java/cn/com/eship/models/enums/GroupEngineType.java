@@ -13,4 +13,8 @@ public class GroupEngineType {
      * SQL脚本
      */
     public final static String SQL_SCRIPT = "2";
+    /**
+     * 集合运算
+     */
+    public final static String JHCOMPUTING = "3";
 }

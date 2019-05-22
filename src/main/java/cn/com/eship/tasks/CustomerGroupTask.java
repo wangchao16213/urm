@@ -169,6 +169,9 @@ public class CustomerGroupTask {
             }
             String sqllll = String.format("INSERT INTO %s.cg%s select * from (%s)", customerGroup.getChannel().getSchema(), customerGroup.getId(), sql.delete(0, " intersect ".length()));
             dataWarehouseRepository.executeSql(sqllll);
+        } else if (GroupEngineType.JHCOMPUTING.equals(customerGroup.getGroupEngineType())) {
+
+
         }
 
     }

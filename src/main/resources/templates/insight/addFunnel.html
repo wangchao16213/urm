@@ -36,7 +36,7 @@
           type="text/css"
           id="style_color"/>
     <link th:href="@{/metronic/assets/layouts/layout3/css/custom.min.css}" rel="stylesheet" type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css"
+    <link th:href="@{/querybuilder/dist/css/query-builder.default.min.css}"
           rel="stylesheet"
           type="text/css"/>
     <link rel="shortcut icon" href="favicon.ico"/>
@@ -220,7 +220,7 @@
         type="text/javascript"></script>
 <script th:src="@{/metronic/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js}"
         type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"
+<script th:src="@{/querybuilder/dist/js/query-builder.standalone.js}"
         type="text/javascript"></script>
 <script th:src="@{/querybuilder/dist/i18n/query-builder.zh-CN.js}" type="text/javascript"></script>
 <script th:src="@{/echarts/echarts.min.js}" type="text/javascript"></script>
