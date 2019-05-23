@@ -280,6 +280,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
             } else {
                 funnelDetail.setStepName(funnelDetail.getEvent().getEventLable());
             }
+            funnelDetail.setId(UUID.randomUUID().toString().replaceAll("-",""));
             funnelDetail.setFunnel(funnel1);
             funnelDetail.setFilter((String) funnelDetailMap.get("filter"));
             funnelDetail.setFilterDsl((String) funnelDetailMap.get("filterDsl"));

@@ -98,7 +98,8 @@ public class InsightController {
     @RequestMapping("saveFunnel")
     @ResponseBody
     public Map<String, String> saveFunnel(Funnel funnel, String funnelDetailJson) throws IOException {
-        List<Map<String, Object>> funnelDetailList = objectMapper.readValue(funnelDetailJson, List.class);
+        ObjectMapper obj = new ObjectMapper();
+        List<Map<String, Object>> funnelDetailList = obj.readValue(funnelDetailJson, List.class);
         insightService.saveFunnel(funnel, funnelDetailList);
         Map<String, String> result = new HashMap<>();
         result.put("code", "0");

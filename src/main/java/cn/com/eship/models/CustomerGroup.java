@@ -126,8 +126,8 @@ public class CustomerGroup {
 
     @Transient
     public String getGroupEngineTypeText() {
-        if (StringUtils.isNotBlank(this.groupEngineType)){
-            switch (this.groupEngineType){
+        if (StringUtils.isNotBlank(this.groupEngineType)) {
+            switch (this.groupEngineType) {
 
             }
         }
@@ -137,7 +137,6 @@ public class CustomerGroup {
     public void setGroupEngineTypeText(String groupEngineTypeText) {
         this.groupEngineTypeText = groupEngineTypeText;
     }
-
 
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, optional = false)//可选属性optional=false,表示company不能为空
@@ -161,6 +160,10 @@ public class CustomerGroup {
                 }
                 case GroupType.SCHEDULED: {
                     result = "调度";
+                    break;
+                }
+                case GroupType.REALTIME: {
+                    result = "实时流";
                     break;
                 }
             }

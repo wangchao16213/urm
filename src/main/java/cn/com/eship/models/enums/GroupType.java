@@ -9,4 +9,5 @@ public class GroupType {
      * 调度
      */
     public final static String SCHEDULED = "1";
+    public final static String REALTIME = "2";
 }
