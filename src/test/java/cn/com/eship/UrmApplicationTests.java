@@ -31,7 +31,7 @@ public class UrmApplicationTests {
 
     @Test
     public void contextLoads2() throws Exception {
-        CustomerGroup customerGroup = customerGroupRepository.findById("1519fd06e75048c0bd3a82405bc543f0").get();
+        CustomerGroup customerGroup = customerGroupRepository.findById("16ad810470394311939c3864d4e61671").get();
         customerGroupTask.executeCustomerGroupTask(customerGroup);
     }
 

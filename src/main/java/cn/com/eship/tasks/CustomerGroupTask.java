@@ -11,6 +11,7 @@ import cn.com.eship.repository.DataWarehouseRepository;
 import cn.com.eship.repository.EventRepository;
 import cn.com.eship.utils.SqlConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class CustomerGroupTask {
     private EventRepository eventRepository;
 
     public void executeCustomerGroupTask(CustomerGroup customerGroup) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
         String truncateSql = String.format("DELETE FROM %s.cg%s", customerGroup.getChannel().getSchema(), customerGroup.getId());
         dataWarehouseRepository.executeSql(truncateSql);
         if (GroupEngineType.GROUP_ENGINE.equals(customerGroup.getGroupEngineType())) {
@@ -170,8 +172,58 @@ public class CustomerGroupTask {
             String sqllll = String.format("INSERT INTO %s.cg%s select * from (%s)", customerGroup.getChannel().getSchema(), customerGroup.getId(), sql.delete(0, " intersect ".length()));
             dataWarehouseRepository.executeSql(sqllll);
         } else if (GroupEngineType.JHCOMPUTING.equals(customerGroup.getGroupEngineType())) {
+            Behavior event = behaviorRepository.findEventBehaviorByChannelId(customerGroup.getChannel().getId());
+            String tabQz = event.getChannel().getSchema();
+            customerGroup.getGroupDsl();
+            Map<String, String> groupDsl = objectMapper.readValue(customerGroup.getGroupDsl(), Map.class);
+            String groupId1 = groupDsl.get("groupId1");
+            String groupOpt1 = groupDsl.get("groupOpt1");
+            String groupId2 = groupDsl.get("groupId2");
+            String groupOpt2 = groupDsl.get("groupOpt2");
+            String groupId3 = groupDsl.get("groupId3");
 
+            StringBuffer sqlPart = new StringBuffer();
 
+            switch (groupOpt1) {
+                case "+": {
+                    sqlPart.append(String.format("select uid from ((select a.uid from %s.%s a) union (select b.uid from %s.%s b))", tabQz, "cg" + groupId1, tabQz, "cg" + groupId2));
+                    break;
+                }
+                case "-": {
+                    sqlPart.append(String.format("select uid from %s.%s a left outer join %s.%s b on a.uid = b.uid where b.uid is null", tabQz, "cg" + groupId1, tabQz, "cg" + groupId2));
+                    break;
+                }
+                case "*": {
+                    sqlPart.append(String.format("select uid from ((select a.uid from %s.%s a) intersect (select b.uid from %s.%s b))", tabQz, "cg" + groupId1, tabQz, "cg" + groupId2));
+                    break;
+                }
+            }
+
+            String sql = "";
+
+            if (StringUtils.isNotBlank(groupId3)) {
+                switch (groupOpt2) {
+                    case "+": {
+                        sql = String.format("select uid from ((%s) union (select d.uid from %s.%s d))", sqlPart.toString(), tabQz, "cg" + groupId3);
+                        break;
+                    }
+                    case "-": {
+                        sql = String.format("select uid from (%s) tmp left outer join %s.%s b on tmp.uid = b.uid where b.uid is null", sqlPart.toString(), tabQz, "cg" + groupId2);
+                        break;
+                    }
+                    case "*": {
+                        sql = String.format("select uid from ((%s) intersect (select d.uid from %s.%s d))", sqlPart.toString(), tabQz, "cg" + groupId3);
+                        break;
+                    }
+                }
+
+            } else {
+                sql = sqlPart.toString();
+
+            }
+
+            //System.out.println(String.format("insert into %s.cg%s %s", tabQz, customerGroup.getId(),sql));
+            dataWarehouseRepository.executeSql(String.format("insert into %s.cg%s %s", tabQz, customerGroup.getId(),sql));
         }
 
     }

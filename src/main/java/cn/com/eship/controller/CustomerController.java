@@ -1,12 +1,9 @@
 package cn.com.eship.controller;
 
-import cn.com.eship.models.Behavior;
 import cn.com.eship.models.BehaviorField;
 import cn.com.eship.models.Channel;
 import cn.com.eship.models.CustomerField;
 import cn.com.eship.models.CustomerGroup;
-import cn.com.eship.models.enums.BehaviorFieldType;
-import cn.com.eship.models.enums.BehaviorType;
 import cn.com.eship.service.CustomerService;
 import cn.com.eship.service.SceneService;
 import org.apache.commons.lang3.StringUtils;

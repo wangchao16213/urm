@@ -69,7 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
         Channel channel = channelRepository.findById(customerGroup.getChannelId()).get();
         customerGroup.setChannel(channel);
         String createGroupSql = String.format(ContextSetting.CUSTOMERGROUP_CREATOR_SQL, channel.getSchema() + ".cg" + customerGroup.getId());
-        //dataWarehouseRepository.executeSql(createGroupSql);
+        dataWarehouseRepository.executeSql(createGroupSql);
         this.customerGroupRepository.save(customerGroup);
         customerGroupTask.executeCustomerGroupTask(customerGroup);
     }

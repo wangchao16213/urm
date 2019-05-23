@@ -40,7 +40,13 @@
           rel="stylesheet"
           type="text/css"/>
     <link th:href="@{/tables/jquery.dataTables.min.css}" rel="stylesheet" type="text/css">
-
+    <link th:href="@{/textext/css/textext.core.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.arrow.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.autocomplete.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.clear.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.focus.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.prompt.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/textext/css/textext.plugin.tags.css}" rel="stylesheet" type="text/css">
     <link rel="shortcut icon" href="favicon.ico"/>
     <style>
         td {
@@ -135,6 +141,7 @@
                                                                                 class="bs-select form-control">
                                                                             <option value="0">静态</option>
                                                                             <option value="1">调度</option>
+                                                                            <option value="2">实时流</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -317,23 +324,20 @@
                                                             <h3 class="form-section">客户群运算</h3>
                                                             <!--/row-->
                                                             <div class="row">
-                                                                <div class="col-md-6">
-
-                                                                    <table>
-                                                                        <tr>
-                                                                            <td><input id="khqInput" type="text"
-                                                                                       value=""
-                                                                                       data-role="tagsinput"/></td>
-                                                                            <td><select id="groupListSelect"></select></td>
-                                                                            <td>
-                                                                                <button>添加</button>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </table>
-
-
-                                                                </div>
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-12">
+                                                                    <select id="groupListSelect1"></select>
+                                                                    <select id="groupOpt1" class="bs-select form-control input-small btn-info" data-style="btn-primary">
+                                                                        <option value="+">+(并集)</option>
+                                                                        <option value="-">-(差集)</option>
+                                                                        <option value="*">*(交集)</option>
+                                                                    </select>
+                                                                    <select id="groupListSelect2"></select>
+                                                                    <select id="groupOpt2" class="bs-select form-control input-small btn-info" data-style="btn-primary">
+                                                                        <option value="+">+(并集)</option>
+                                                                        <option value="-">-(差集)</option>
+                                                                        <option value="*">*(交集)</option>
+                                                                    </select>
+                                                                    <select id="groupListSelect3"></select>
 
                                                                 </div>
                                                             </div>
@@ -408,6 +412,16 @@
         type="text/javascript"></script>
 <script th:src="@{/tables/dti18n.js}"
         type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.core.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.ajax.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.arrow.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.autocomplete.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.clear.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.filter.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.focus.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.prompt.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.suggestions.js}" type="text/javascript"></script>
+<script th:src="@{/textext/js/textext.plugin.tags.js}" type="text/javascript"></script>
 
 
 <script>
@@ -537,6 +551,19 @@
                 });
             } else if (groupEngineType == '2') {
                 groupDsl = $("#code").val();
+            } else if (groupEngineType == '3') {
+                var groupId1 = $("#groupListSelect1").val();
+                var groupOpt1 = $("#groupOpt1").val();
+                var groupId2 = $("#groupListSelect2").val();
+                var groupOpt2 = $("#groupOpt2").val();
+                var groupId3 = $("#groupListSelect3").val();
+                var map = {};
+                map.groupId1 = groupId1;
+                map.groupOpt1 = groupOpt1;
+                map.groupId2 = groupId2;
+                map.groupOpt2 = groupOpt2;
+                map.groupId3 = groupId3;
+                groupDsl = map;
             }
 
             $.post('/customer/saveCustomerGroup', {
@@ -747,20 +774,24 @@
 
 
     function getGroupList() {
-        $('#groupListSelect').empty();
+        $('#groupListSelect1').empty();
+        $('#groupListSelect2').empty();
+        $('#groupListSelect3').empty();
+        $('#groupListSelect1').append('<option value="">不选择</option>');
+        $('#groupListSelect2').append('<option value="">不选择</option>');
+        $('#groupListSelect3').append('<option value="">不选择</option>');
         $.get('/customer/getCustomerGroupList', {channelId: $("#channelSelect").val()}, function (data) {
             customerGroupList = data;
             $.each(data, function (i, v) {
                 var tag = "<option value='" + v.id + "'>" + v.groupName + "</option>";
-                $('#groupListSelect').append(tag);
+                $('#groupListSelect1').append(tag);
+                $('#groupListSelect2').append(tag);
+                $('#groupListSelect3').append(tag);
             });
-            $('#groupListSelect').selectpicker('refresh');
+            $('#groupListSelect1').selectpicker('refresh');
+            $('#groupListSelect2').selectpicker('refresh');
+            $('#groupListSelect3').selectpicker('refresh');
         }, 'json');
-    }
-
-
-    function printValue() {
-        console.log($("#khqInput").val());
     }
 
 </script>

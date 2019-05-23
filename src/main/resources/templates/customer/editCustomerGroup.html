@@ -135,6 +135,7 @@
                                                                                 class="bs-select form-control">
                                                                             <option value="0">静态</option>
                                                                             <option value="1">调度</option>
+                                                                            <option value="2">实时流</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -345,6 +346,33 @@
                                                             </div>
                                                         </div>
 
+                                                        <div id="fqjhjs">
+                                                            <h3 class="form-section">客户群运算</h3>
+                                                            <!--/row-->
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <select id="groupListSelect1"></select>
+                                                                    <select id="groupOpt1"
+                                                                            class="bs-select form-control input-small btn-info"
+                                                                            data-style="btn-primary">
+                                                                        <option value="+">+(并集)</option>
+                                                                        <option value="-">-(差集)</option>
+                                                                        <option value="*">*(交集)</option>
+                                                                    </select>
+                                                                    <select id="groupListSelect2"></select>
+                                                                    <select id="groupOpt2"
+                                                                            class="bs-select form-control input-small btn-info"
+                                                                            data-style="btn-primary">
+                                                                        <option value="+">+(并集)</option>
+                                                                        <option value="-">-(差集)</option>
+                                                                        <option value="*">*(交集)</option>
+                                                                    </select>
+                                                                    <select id="groupListSelect3"></select>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
 
                                                     </div>
                                                     <div class="form-actions">
@@ -443,7 +471,6 @@
         $("select").selectpicker();
 
 
-
         $("#groupName").val(customerGroup.groupName);
         $('#channelSelect').selectpicker('val', customerGroup.channel.id);
         $("#groupDesc").val(customerGroup.groupDesc);
@@ -456,6 +483,7 @@
         initMeasureByHit();
         initFormFiltersInEvent();
         initFormFiltersInHit();
+        getGroupList();
         $("#addDoEventConditionBtn").click(function () {
             addDoEventCondition();
         });
@@ -471,9 +499,11 @@
         if (customerGroup.groupEngineType == '0') {
             $("#nzfqyq").hide();
             $("#sqlscript").hide();
+            $("#fqjhjs").hide();
         } else if (customerGroup.groupEngineType == '1') {
             $("#nzfqyq").show();
             $("#sqlscript").hide();
+            $("#fqjhjs").hide();
             var groupDslObj = JSON.parse(customerGroup.groupDsl);
             $.each(groupDslObj.doEvent, function (i, val) {
                 $("#addDoEventConditionBtn").trigger("click");
@@ -483,7 +513,7 @@
                         $(domEle).children().first().val(val.eventId);
                     }
                     if (index == 1) {
-                        if (val.filterDsl != null){
+                        if (val.filterDsl != null) {
                             $(domEle).parent().data("querybuilderObj").queryBuilder('setRules', JSON.parse(val.filterDsl));
                         }
                     }
@@ -508,11 +538,11 @@
                 });
             });
 
-            $.each(groupDslObj.doHit, function (i,val) {
+            $.each(groupDslObj.doHit, function (i, val) {
                 $("#addDoHitConditionBtn").trigger("click");
                 $("#doHit > tbody > tr:last").children().each(function (index, domEle) {
                     if (index == 0) {
-                        if (val.filterDsl != null){
+                        if (val.filterDsl != null) {
                             $(domEle).parent().data("querybuilderObj").queryBuilder('setRules', JSON.parse(val.filterDsl));
                         }
                     }
@@ -537,7 +567,7 @@
                 });
             });
 
-            $.each(groupDslObj.doAction, function (i,val) {
+            $.each(groupDslObj.doAction, function (i, val) {
                 $("#addDoActionConditionBtn").trigger("click");
                 $("#doAction > tbody > tr:last").children().each(function (index, domEle) {
                     if (index == 0) {
@@ -559,7 +589,28 @@
         } else if (customerGroup.groupEngineType == '2') {
             $("#nzfqyq").hide();
             $("#sqlscript").show();
+            $("#fqjhjs").hide();
             $("#code").val(customerGroup.groupDsl);
+        }
+        else if (customerGroup.groupEngineType == '3') {
+            $("#nzfqyq").hide();
+            $("#sqlscript").hide();
+            $("#fqjhjs").show();
+
+            var dsl = JSON.parse(customerGroup.groupDsl);
+            $("#groupListSelect1").val(dsl.groupId1);
+            $("#groupOpt1").val(dsl.groupOpt1);
+            $("#groupListSelect2").val(dsl.groupId2);
+            $("#groupOpt2").val(dsl.groupOpt2);
+            $("#groupListSelect3").val(dsl.groupId3);
+
+            $('#groupListSelect1').selectpicker('refresh');
+            $('#groupOpt1').selectpicker('refresh');
+            $('#groupListSelect2').selectpicker('refresh');
+            $('#groupOpt2').selectpicker('refresh');
+            $('#groupListSelect3').selectpicker('refresh');
+
+
         }
 
 
@@ -653,7 +704,7 @@
             }
 
             $.post('/customer/updateCustomerGroup', {
-                'id':customerGroup.id,
+                'id': customerGroup.id,
                 'groupName': groupName,
                 'channelId': $("#channelSelect").val(),
                 'groupDesc': groupDesc,
@@ -868,6 +919,27 @@
             filters: formBody.doHit.querybuilderFilter
         });
         pNode.parent().data("querybuilderObj", querybuilderObj);
+    }
+
+    function getGroupList() {
+        $('#groupListSelect1').empty();
+        $('#groupListSelect2').empty();
+        $('#groupListSelect3').empty();
+        $('#groupListSelect1').append('<option value="">不选择</option>');
+        $('#groupListSelect2').append('<option value="">不选择</option>');
+        $('#groupListSelect3').append('<option value="">不选择</option>');
+        $.get('/customer/getCustomerGroupList', {channelId: $("#channelSelect").val()}, function (data) {
+            customerGroupList = data;
+            $.each(data, function (i, v) {
+                var tag = "<option value='" + v.id + "'>" + v.groupName + "</option>";
+                $('#groupListSelect1').append(tag);
+                $('#groupListSelect2').append(tag);
+                $('#groupListSelect3').append(tag);
+            });
+            $('#groupListSelect1').selectpicker('refresh');
+            $('#groupListSelect2').selectpicker('refresh');
+            $('#groupListSelect3').selectpicker('refresh');
+        }, 'json');
     }
 
     /*]]>*/
