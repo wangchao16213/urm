@@ -190,7 +190,7 @@ public class CustomerGroupTask {
                     break;
                 }
                 case "-": {
-                    sqlPart.append(String.format("select uid from %s.%s a left outer join %s.%s b on a.uid = b.uid where b.uid is null", tabQz, "cg" + groupId1, tabQz, "cg" + groupId2));
+                    sqlPart.append(String.format("select a.uid from %s.%s a left outer join %s.%s b on a.uid = b.uid where b.uid is null", tabQz, "cg" + groupId1, tabQz, "cg" + groupId2));
                     break;
                 }
                 case "*": {
@@ -208,7 +208,7 @@ public class CustomerGroupTask {
                         break;
                     }
                     case "-": {
-                        sql = String.format("select uid from (%s) tmp left outer join %s.%s b on tmp.uid = b.uid where b.uid is null", sqlPart.toString(), tabQz, "cg" + groupId2);
+                        sql = String.format("select a.uid from (%s) tmp left outer join %s.%s b on tmp.uid = b.uid where b.uid is null", sqlPart.toString(), tabQz, "cg" + groupId2);
                         break;
                     }
                     case "*": {
