@@ -32,4 +32,6 @@ public interface CustomerService {
     public List<Map<String, Object>> getCustomerById(String customerId,String channelId);
 
     public List<Map<String,Object>> getEventLogList(String customerId,String channelId);
+    
+    public List<String> getCustomerInGroupList(String customerId,String channelId);
 }

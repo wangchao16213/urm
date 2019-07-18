@@ -2,6 +2,8 @@ package cn.com.eship.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.collections.list.TreeList;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -327,6 +330,7 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
 
         List<Object> legendData = new ArrayList<>();
 
+  
         funnelDetailList.stream().forEach(funnelDetail -> {
             legendData.add(funnelDetail.getEvent().getEventLable());
             SqlConstructor sqlConstructor = new SqlConstructor(eventBehavior);
@@ -346,19 +350,29 @@ public class InsightServiceImpl extends CommonServiceImpl implements InsightServ
         StringBuffer sqlBuffer = new StringBuffer();
         for (int i = 0; i < sqlConstructorList.size(); i++) {
             if (i < sqlConstructorList.size() - 1) {
-                sqlBuffer.append(sqlConstructorList.get(i).getSqlWithoutLimit()).append(" union ");
+                sqlBuffer.append("select * from (" + sqlConstructorList.get(i).getSqlWithoutLimit() + ")").append(" union all ");
             } else {
-                sqlBuffer.append(sqlConstructorList.get(i).getSqlWithoutLimit());
+                sqlBuffer.append("select * from (" + sqlConstructorList.get(i).getSqlWithoutLimit() + ")");
             }
         }
-        List<List<Object>> dataset = dataWarehouseRepository.commonData(sqlBuffer.toString());
+        List<List<Object>> dataset = (List<List<Object>>)dataWarehouseRepository.commonData(sqlBuffer.toString());
+        List<Long> aa = new ArrayList<Long>();
+        for (int i = 0; i < dataset.size(); i++) {
+        	aa.add((Long)dataset.get(i).get(0));
+        }
+        
+        Collections.sort(aa);
+        Collections.reverse(aa);
+        
+        
+        
 
         FunnelAnalyticsVo funnelAnalyticsVo = new FunnelAnalyticsVo();
         funnelAnalyticsVo.getLegend().put("data", legendData);
         for (int i = 0; i < dataset.size(); i++) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("name", funnelDetailList.get(i).getStepName());
-            map.put("value", dataset.get(i).get(0));
+            map.put("value", aa.get(i));
             funnelAnalyticsVo.getSeries().add(map);
         }
         return funnelAnalyticsVo;

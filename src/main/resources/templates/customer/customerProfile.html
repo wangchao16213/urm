@@ -85,6 +85,24 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    
+                                    
+                                    
+                                        <div class="col-md-12">
+                                            <div class="portlet light portlet-fit ">
+                                                <div class="portlet-title">
+                                                    <div class="caption">
+                                                        <i class=" icon-layers font-green"></i>
+                                                        <span class="caption-subject font-green bold uppercase">所属群组(标签)</span>
+                                                    </div>
+                                                </div>
+                                                <div class="portlet-body" id="groups">
+                                                
+                                                </div>
+                                            </div>
+                                        </div>Ï
+                                    
+                                    
                                     </div>
                                 </div>
                                 <div class="col-md-8">
@@ -186,10 +204,21 @@
 
             });
         },'json');
+        
+        showGroups();
     });
     
     function showDetail(id) {
         console.log(details[id]);
+    }
+    
+    function showGroups(){
+            $.get('/customer/groups',{customerId:$("#customerId").val(),channelId:$("#channelId").val()},function (data) {
+            $("#groups").empty();
+            $.each(data,function (i,val) {
+            	$("#groups").append(val + ",");
+            });
+        },'json');
     }
 </script>
 </body>

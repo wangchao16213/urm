@@ -161,5 +161,13 @@ public class CustomerController {
     public List<Map<String,Object>> eventLogList(String customerId,String channelId){
         return customerService.getEventLogList(customerId,channelId);
     }
+    
+    
+    @RequestMapping("groups")
+    @ResponseBody
+    public List<String> groups(String customerId,String channelId){
+        return customerService.getCustomerInGroupList(customerId,channelId);
+    }
+    
 
 }

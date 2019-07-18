@@ -9,6 +9,8 @@ import cn.com.eship.repository.specifications.CustomerGroupSpecification;
 import cn.com.eship.service.CustomerService;
 import cn.com.eship.service.SceneService;
 import cn.com.eship.tasks.CustomerGroupTask;
+
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,6 +267,29 @@ public class CustomerServiceImpl implements CustomerService {
         }
         return result;
     }
+
+	@Override
+	public List<String> getCustomerInGroupList(String customerId, String channelId) {
+		CustomerGroup customerGroup = new CustomerGroup();
+		customerGroup.setChannelId(channelId);
+		CustomerGroupSpecification customerGroupSpecification = new CustomerGroupSpecification(customerGroup);
+		List<CustomerGroup> customerGroups = customerGroupRepository.findAll(customerGroupSpecification);
+		List<String> exitGroupIdList = new ArrayList<String>();
+		List<String> naming = new ArrayList<String>();
+		customerGroups.stream().forEach(cg ->{
+			String groupid = cg.getId();
+			String sql = String.format("SELECT COUNT(1) FROM %s.cg%s where uid = '%s'",cg.getChannel().getSchema(),groupid,customerId);
+			Long count = (Long)dataWarehouseRepository.commonData(sql).get(0).get(0);
+			if(count > 0) {
+				exitGroupIdList.add(groupid);
+			}
+		});
+		Iterator<CustomerGroup> it = customerGroupRepository.findAllById(exitGroupIdList).iterator();
+		while(it.hasNext()) {
+			naming.add(it.next().getGroupName());
+		}
+		return naming;
+	}
 
 
 }
